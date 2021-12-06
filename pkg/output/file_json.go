@@ -3,6 +3,8 @@ package output
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/ffuf/ffuf/pkg/ffuf"
@@ -31,10 +33,7 @@ type JsonResult struct {
 }
 
 type jsonFileOutput struct {
-	CommandLine string       `json:"commandline"`
-	Time        string       `json:"time"`
-	Results     []JsonResult `json:"results"`
-	Config      *ffuf.Config `json:"config"`
+	Results []string `json:"results"`
 }
 
 func writeEJSON(filename string, config *ffuf.Config, res []ffuf.Result) error {
@@ -57,41 +56,42 @@ func writeEJSON(filename string, config *ffuf.Config, res []ffuf.Result) error {
 }
 
 func writeJSON(filename string, config *ffuf.Config, res []ffuf.Result) error {
-	t := time.Now()
-	jsonRes := make([]JsonResult, 0)
+	jsonRes := []string{}
 	for _, r := range res {
 		strinput := make(map[string]string)
 		for k, v := range r.Input {
 			strinput[k] = string(v)
 		}
-		jsonRes = append(jsonRes, JsonResult{
-			Input:            strinput,
-			Position:         r.Position,
-			StatusCode:       r.StatusCode,
-			ContentLength:    r.ContentLength,
-			ContentWords:     r.ContentWords,
-			ContentLines:     r.ContentLines,
-			ContentType:      r.ContentType,
-			RedirectLocation: r.RedirectLocation,
-			Duration:         r.Duration,
-			ResultFile:       r.ResultFile,
-			Url:              r.Url,
-			Host:             r.Host,
-		})
+		jsonRes = append(jsonRes, r.Url)
+		jsonRes = append(jsonRes, "\n")
 	}
-	outJSON := jsonFileOutput{
-		CommandLine: config.CommandLine,
-		Time:        t.Format(time.RFC3339),
-		Results:     jsonRes,
-		Config:      config,
-	}
-	outBytes, err := json.Marshal(outJSON)
+	/*
+		outJSON := jsonFileOutput{
+			Results: jsonRes,
+		}
+		outBytes, err := json.Marshal(outJSON)
+		if err != nil {
+			return err
+		}
+	*/
+	/*
+		err = ioutil.WriteFile(filename, outBytes, 0644)
+		if err != nil {
+			return err
+		}
+	*/
+	outBytes := strings.Join(jsonRes, "")
+
+	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(filename, outBytes, 0644)
-	if err != nil {
+
+	defer f.Close()
+
+	if _, err = f.Write([]byte(outBytes)); err != nil {
 		return err
 	}
+
 	return nil
 }

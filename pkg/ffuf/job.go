@@ -224,6 +224,9 @@ func (j *Job) startExecution() {
 		nextInput := j.Input.Value()
 		nextPosition := j.Input.Position()
 		wg.Add(1)
+		//test with finalize
+		j.Output.Finalize()
+
 		j.Counter++
 
 		go func() {

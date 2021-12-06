@@ -1,11 +1,7 @@
-```
-        /'___\  /'___\           /'___\
-       /\ \__/ /\ \__/  __  __  /\ \__/
-       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
-        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
-         \ \_\   \ \_\  \ \____/  \ \_\
-          \/_/    \/_/   \/___/    \/_/
-```
+# Same As old fuff, but a little memory friendly and output txt file
+
+use -o output.txt and it will post it to output.txt , it writes to file  during runtime so if you terminate in mid some output might be lost
+
 
 # ffuf - Fuzz Faster U Fool
 

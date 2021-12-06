@@ -53,7 +53,8 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 			MaxIdleConnsPerHost: 500,
 			MaxConnsPerHost:     500,
 			DialContext: (&net.Dialer{
-				Timeout: time.Duration(time.Duration(conf.Timeout) * time.Second),
+				Timeout:   time.Duration(time.Duration(conf.Timeout) * time.Second),
+				KeepAlive: time.Duration(time.Duration(conf.Timeout) * time.Second), //added keep alive
 			}).DialContext,
 			TLSHandshakeTimeout: time.Duration(time.Duration(conf.Timeout) * time.Second),
 			TLSClientConfig: &tls.Config{
@@ -155,7 +156,7 @@ func (r *SimpleRunner) Execute(req *ffuf.Request) (ffuf.Response, error) {
 		}
 	}
 
-	if len(r.config.OutputDirectory) > 0 {
+	if len(r.config.OutputDirectory) > 1 {
 		rawresp, _ := httputil.DumpResponse(httpresp, true)
 		resp.Request.Raw = string(rawreq)
 		resp.Raw = string(rawresp)

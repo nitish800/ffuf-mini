@@ -132,7 +132,6 @@ func ParseFlags(opts *ffuf.ConfigOptions) *ffuf.ConfigOptions {
 }
 
 func main() {
-
 	var err, optserr error
 
 	// prepare the default config options from default config file

@@ -34,8 +34,8 @@ type Stdoutput struct {
 func NewStdoutput(conf *ffuf.Config) *Stdoutput {
 	var outp Stdoutput
 	outp.config = conf
-	outp.Results = make([]ffuf.Result, 0)
-	outp.CurrentResults = make([]ffuf.Result, 0)
+	outp.Results = nil        // make([]ffuf.Result, 0)
+	outp.CurrentResults = nil // make([]ffuf.Result, 0)
 	return &outp
 }
 
@@ -135,7 +135,7 @@ func (s *Stdoutput) Banner() {
 
 // Reset resets the result slice
 func (s *Stdoutput) Reset() {
-	s.CurrentResults = make([]ffuf.Result, 0)
+	s.CurrentResults = nil
 }
 
 // Cycle moves the CurrentResults to Results and resets the results slice
@@ -294,13 +294,16 @@ func (s *Stdoutput) SaveFile(filename, format string) error {
 // Finalize gets run after all the ffuf jobs are completed
 func (s *Stdoutput) Finalize() error {
 	var err error
-	if s.config.OutputFile != "" {
+	if s.config.OutputFile != "" && len(s.CurrentResults) > 0 {
 		err = s.SaveFile(s.config.OutputFile, s.config.OutputFormat)
 		if err != nil {
 			s.Error(err.Error())
 		}
+
 	}
-	fmt.Fprintf(os.Stderr, "\n")
+	s.Results = nil
+	s.CurrentResults = nil
+	//fmt.Fprintf(os.Stderr, "\n")
 	return nil
 }
 
@@ -331,6 +334,7 @@ func (s *Stdoutput) Result(resp ffuf.Response) {
 	s.CurrentResults = append(s.CurrentResults, sResult)
 	// Output the result
 	s.PrintResult(sResult)
+
 }
 
 func (s *Stdoutput) writeResultToFile(resp ffuf.Response) string {
