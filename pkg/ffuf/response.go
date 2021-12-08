@@ -22,6 +22,12 @@ type Response struct {
 	Time          time.Duration
 }
 
+//free memory
+func (resp *Response) MakeFreeMemory() {
+	resp.Data = nil
+	resp.Raw = ""
+}
+
 // GetRedirectLocation returns the redirect location for a 3xx redirect HTTP response
 func (resp *Response) GetRedirectLocation(absolute bool) string {
 

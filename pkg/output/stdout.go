@@ -309,7 +309,7 @@ func (s *Stdoutput) Finalize() error {
 
 func (s *Stdoutput) Result(resp ffuf.Response) {
 	// Do we want to write request and response to a file
-	if len(s.config.OutputDirectory) > 0 {
+	if len(s.config.OutputDirectory) > 1 {
 		resp.ResultFile = s.writeResultToFile(resp)
 	}
 

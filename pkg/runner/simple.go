@@ -52,6 +52,7 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 			MaxIdleConns:        1000,
 			MaxIdleConnsPerHost: 500,
 			MaxConnsPerHost:     500,
+			DisableKeepAlives:   true,
 			DialContext: (&net.Dialer{
 				Timeout:   time.Duration(time.Duration(conf.Timeout) * time.Second),
 				KeepAlive: time.Duration(time.Duration(conf.Timeout) * time.Second), //added keep alive
@@ -165,6 +166,7 @@ func (r *SimpleRunner) Execute(req *ffuf.Request) (ffuf.Response, error) {
 	if respbody, err := ioutil.ReadAll(httpresp.Body); err == nil {
 		resp.ContentLength = int64(len(string(respbody)))
 		resp.Data = respbody
+		respbody = nil // making it nil
 	}
 
 	wordsSize := len(strings.Split(string(resp.Data), " "))
