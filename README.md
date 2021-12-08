@@ -1,7 +1,8 @@
-# Same As old fuff, but a little memory friendly and output txt file
+# Same As old fuff, just output txt file.
 
 use -o output.txt and it will post it to output.txt , it writes to file  during runtime so if you terminate in mid some output might be lost
 
+## TODO: Port to fasthttp
 
 # ffuf - Fuzz Faster U Fool
 
