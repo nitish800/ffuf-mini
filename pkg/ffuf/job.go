@@ -311,6 +311,7 @@ func (j *Job) isMatch(resp Response) bool {
 	}
 	// The response was not matched, return before running filters
 	if !matched {
+		resp.MakeFreeMemory()
 		return false
 	}
 	for _, f := range j.Config.Filters {
@@ -319,9 +320,11 @@ func (j *Job) isMatch(resp Response) bool {
 			continue
 		}
 		if fv {
+			resp.MakeFreeMemory()
 			return false
 		}
 	}
+	resp.MakeFreeMemory()
 	return true
 }
 
@@ -361,6 +364,7 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) {
 	}
 	j.pauseWg.Wait()
 	if j.isMatch(resp) {
+
 		// Re-send request through replay-proxy if needed
 		if j.ReplayRunner != nil {
 			replayreq, err := j.ReplayRunner.Prepare(input)
@@ -381,6 +385,7 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) {
 			j.handleGreedyRecursionJob(resp)
 		}
 	}
+	resp.MakeFreeMemory()
 
 	if j.Config.Recursion && j.Config.RecursionStrategy == "default" && len(resp.GetRedirectLocation(false)) > 0 {
 		j.handleDefaultRecursionJob(resp)
@@ -452,8 +457,10 @@ func (j *Job) CalibrateResponses() ([]Response, error) {
 
 		// Only calibrate on responses that would be matched otherwise
 		if j.isMatch(resp) {
+			resp.MakeFreeMemory()
 			results = append(results, resp)
 		}
+		resp.MakeFreeMemory()
 	}
 	return results, nil
 }

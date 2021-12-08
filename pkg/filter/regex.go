@@ -44,6 +44,8 @@ func (f *RegexpFilter) Filter(response *ffuf.Response) (bool, error) {
 		pattern = strings.ReplaceAll(pattern, keyword, regexp.QuoteMeta(string(inputitem)))
 	}
 	matched, err := regexp.Match(pattern, matchdata)
+	matchdata = nil
+	response.MakeFreeMemory() //test 3
 	if err != nil {
 		return false, nil
 	}

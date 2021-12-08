@@ -43,6 +43,7 @@ func (f *WordFilter) MarshalJSON() ([]byte, error) {
 
 func (f *WordFilter) Filter(response *ffuf.Response) (bool, error) {
 	wordsSize := len(strings.Split(string(response.Data), " "))
+	response.MakeFreeMemory() //test 3
 	for _, iv := range f.Value {
 		if iv.Min <= int64(wordsSize) && int64(wordsSize) <= iv.Max {
 			return true, nil

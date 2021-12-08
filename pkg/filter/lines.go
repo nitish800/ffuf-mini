@@ -43,6 +43,7 @@ func (f *LineFilter) MarshalJSON() ([]byte, error) {
 
 func (f *LineFilter) Filter(response *ffuf.Response) (bool, error) {
 	linesSize := len(strings.Split(string(response.Data), "\n"))
+	response.MakeFreeMemory() // making response body nil
 	for _, iv := range f.Value {
 		if iv.Min <= int64(linesSize) && int64(linesSize) <= iv.Max {
 			return true, nil

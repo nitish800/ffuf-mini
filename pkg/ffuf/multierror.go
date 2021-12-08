@@ -14,7 +14,7 @@ func NewMultierror() Multierror {
 }
 
 func (m *Multierror) Add(err error) {
-	m.errors = append(m.errors, err)
+	//m.errors = append(m.errors, err)
 }
 
 func (m *Multierror) ErrorOrNil() error {
